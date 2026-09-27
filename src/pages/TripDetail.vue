@@ -8,9 +8,9 @@
     </div>
     <section class="grid">
       <BudgetChart :spent="stats.value.budget.spent" :remaining="stats.value.budget.remaining" />
-      <div class="band"><strong>统计</strong><p>天数 {{ stats.value.days }} · 景点 {{ stats.value.spotCount }}</p><p class="muted">{{ stats.value.budget.warning }}</p></div>
+      <div class="band"><strong>统计</strong><p>天数 {{ stats.value.days }} · 景点 {{ stats.value.spotCount }} · 每日额度 {{ formatCurrency(stats.value.budget.allowance) }}</p><p class="muted">{{ stats.value.budget.warning }}</p></div>
     </section>
-    <DayTimeline v-for="day in tripDays" :key="day.id" :day="day" :spots="spotStore.spots" />
+    <DayTimeline v-for="day in tripDays" :key="day.id" :day="day" :spots="spotStore.spots" :allowance="allowance" />
   </main>
   <main v-else class="page"><EmptyState title="旅行不存在" /></main>
 </template>
@@ -21,6 +21,8 @@ import { useTripStore } from '../stores/tripStore';
 import { useSpotStore } from '../stores/spotStore';
 import { useDayPlanStore } from '../stores/dayPlanStore';
 import { useTripStats } from '../hooks/useTripStats';
+import { dailyAllowance } from '../utils/budgetCalculator';
+import { formatCurrency } from '../utils/formatters';
 import TripHeader from '../components/common/TripHeader.vue';
 import DayTimeline from '../components/common/DayTimeline.vue';
 import BudgetChart from '../components/common/BudgetChart.vue';
@@ -32,6 +34,7 @@ const spotStore = useSpotStore();
 const dayPlanStore = useDayPlanStore();
 const trip = computed(() => tripStore.trips.find((item) => item.id === route.params.id));
 const tripDays = computed(() => dayPlanStore.dayPlans.filter((day) => day.trip_id === route.params.id));
-const stats = computed(() => trip.value ? useTripStats(trip.value, dayPlanStore.dayPlans, spotStore.spots) : { value: { days: 0, spotCount: 0, budget: { spent: 0, remaining: 0, warning: '' } } });
+const allowance = computed(() => (trip.value ? dailyAllowance(trip.value, dayPlanStore.dayPlans) : 0));
+const stats = computed(() => trip.value ? useTripStats(trip.value, dayPlanStore.dayPlans, spotStore.spots) : { value: { days: 0, spotCount: 0, budget: { spent: 0, remaining: 0, warning: '', allowance: 0 } } });
 </script>
 

@@ -5,6 +5,8 @@ export const messages = {
   emptyTrips: '还没有旅行计划，先创建一次出发。',
   emptySpots: '没有符合条件的景点。',
   budgetExceeded: '预算可能超支，请调整景点或交通方式',
+  dayBudgetExceeded: '当天预计花费已超出每日额度，这一天建议少安排付费项目',
+  shareCopied: '行程文本已复制，含每天合计与超支情况',
   storageRecovered: '本地数据已恢复',
 };
 
